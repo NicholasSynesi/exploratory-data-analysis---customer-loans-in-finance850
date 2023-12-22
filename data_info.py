@@ -60,7 +60,7 @@ class DataFrameInfo:
 
         Parameters:
         - df: DataFrame
-        - threshold: choose the minimum number of empty values. Common use case is to enter 0 to 
+        - threshold: float, choose the minimum number of empty values. Common use case is to enter 0 to 
         ignore all columns with no missing values
 
         Returns: dtypes of each column.

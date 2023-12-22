@@ -9,22 +9,23 @@ class Plotter:
     def __init__(self, data):
         self.data = data
 
-    def plot_null_values(self, column=None):
+    def plot_null_values(self, columns=None):
         """
         Shows the null values in either the entire DataFrame, or specific column.
 
         Parameters:
-        - column: str, If not none, shows the null values for the column inputted.
+        - columns: str, If not none, shows the null values for the columns inputted.
         """
         plt.figure(figsize=(10, 6))
-        if column is None:
+        if columns is None:
             # Plot nulls for entire dataframe
             sns.heatmap(self.data.isnull(), cbar=False, cmap='viridis')
         else:
             # Plot nulls for specified column
-            sns.heatmap(self.data[[column]].isnull(), cbar=False)
+            sns.heatmap(pd.DataFrame(self.data[columns].isnull()), cbar=False)
         
-        plt.title(f'Null Values for {column if column else "Entire DataFrame"}')
+        column_str = ", ".join(columns) if columns else "Entire DataFrame"
+        plt.title(f'Null Values distribution')
         plt.show()
 
     def check_skew(self):
@@ -77,7 +78,6 @@ class Plotter:
 
             mean = np.mean(data_points)
             std = np.std(data_points)
-
             zscores = (data_points - mean) / std
             
             self.data['zscore'] = zscores
@@ -86,14 +86,8 @@ class Plotter:
 
             largest_indices = np.argsort(np.abs(zscores))[-30:]
             largest_zscores = zscores[largest_indices]
-            #largest_datapoints = data_points.iloc[largest_indices]
-            return largest_zscores#, largest_datapoints
+            return largest_zscores
 
-
-df = pd.read_csv('loan_payments_data.csv')
-
-#nulls = Plotter(df)
-#nulls.plot_null_values('last_payment_date')
 
 class DataFrameTransform:
     def __init__(self, data):
@@ -164,4 +158,13 @@ class DataFrameTransform:
             if show_graph == True:
                 t=sns.histplot(yeojohnson_plot,label="Skewness: %.2f"%(yeojohnson_plot.skew()) )
                 t.legend()
+        
+    def remove_outlier(self, index):
+        """
+        Removes an outlier from a specified column.
+
+        Parameters:
+        - index: int, the index of the row where the outlier is
+        """
+        self.data.drop(index, inplace=True)
 
